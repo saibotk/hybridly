@@ -38,21 +38,22 @@ export interface Column<T extends object = never> {
 	label: string
 	hidden: boolean
 	sortable: boolean
-	record: T
-}
-
-export interface TextColumn<T extends object = never> extends Column<T> {
+	type: string
+	metadata: any
 }
 
 export interface Action {
 	name: string
 	label: string
+	type: string
+	metadata: any
 }
 
 export interface Filter {
 	name: string
 	label: string
 	type: string
+	metadata: any
 }
 
 export interface BulkAction extends Action {

@@ -9,6 +9,7 @@ use Hybridly\Tables\Support\Concerns;
 abstract class BaseFilter extends Component
 {
     use Concerns\HasLabel;
+    use Concerns\HasMetadata;
     use Concerns\HasName;
     use Concerns\HasType;
     use Concerns\IsHideable;
@@ -43,6 +44,7 @@ abstract class BaseFilter extends Component
             'name' => $this->getName(),
             'label' => $this->getLabel(),
             'type' => $this->getType(),
+            'metadata' => $this->getMetadata(),
         ];
     }
 }

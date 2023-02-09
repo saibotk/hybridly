@@ -7,6 +7,9 @@ trait IsHideable
     protected bool|\Closure $isHidden = false;
     protected bool|\Closure $isVisible = true;
 
+    /**
+     * Whether this component should be hidden.
+     */
     public function hidden(bool|\Closure $condition = true): static
     {
         $this->isHidden = $condition;
@@ -14,6 +17,9 @@ trait IsHideable
         return $this;
     }
 
+    /**
+     * Whether this component should be visible.
+     */
     public function visible(bool|\Closure $condition = true): static
     {
         $this->isVisible = $condition;

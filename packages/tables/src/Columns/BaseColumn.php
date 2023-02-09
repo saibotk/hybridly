@@ -10,7 +10,9 @@ abstract class BaseColumn extends Component
 {
     use Columns\Concerns\IsSortable;
     use Concerns\HasLabel;
+    use Concerns\HasMetadata;
     use Concerns\HasName;
+    use Concerns\HasType;
     use Concerns\IsHideable;
 
     final public function __construct(string $name)
@@ -39,9 +41,11 @@ abstract class BaseColumn extends Component
     {
         return [
             'name' => $this->getName(),
+            'type' => $this->getType(),
             'label' => $this->getLabel(),
             'hidden' => $this->isHidden(),
             'sortable' => $this->isSortable(),
+            'metadata' => $this->getMetadata(),
         ];
     }
 }

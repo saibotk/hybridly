@@ -10,7 +10,9 @@ abstract class BaseAction extends Component
 {
     use Actions\Concerns\HasAction;
     use Concerns\HasLabel;
+    use Concerns\HasMetadata;
     use Concerns\HasName;
+    use Concerns\HasType;
     use Concerns\IsHideable;
 
     final public function __construct(string $name)
@@ -39,6 +41,8 @@ abstract class BaseAction extends Component
         return [
             'name' => $this->getName(),
             'label' => $this->getLabel(),
+            'type' => $this->getType(),
+            'metadata' => $this->getMetadata(),
         ];
     }
 }

@@ -7,7 +7,7 @@ trait HasType
     protected ?string $type = null;
 
     /**
-     * A unique type identifier for this component.
+     * Unique type identifier for this component.
      */
     public function type(string $type): static
     {
