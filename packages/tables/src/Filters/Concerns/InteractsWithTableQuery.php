@@ -8,6 +8,16 @@ trait InteractsWithTableQuery
 {
     protected ?\Closure $modifyQueryUsing = null;
 
+    /**
+     * Query for this filter.
+     */
+    public function query(?\Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function apply(Builder $query, mixed $data): Builder
     {
         if ($this->isHidden()) {
@@ -22,8 +32,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        $callback = $this->modifyQueryUsing;
-        $this->evaluate($callback, [
+        $this->evaluate($this->modifyQueryUsing, [
             'data' => $data,
             'query' => $query,
         ]);
@@ -34,13 +43,6 @@ trait InteractsWithTableQuery
     public function applyToBaseQuery(Builder $query, mixed $data): Builder
     {
         return $query;
-    }
-
-    public function query(?\Closure $callback): static
-    {
-        $this->modifyQueryUsing = $callback;
-
-        return $this;
     }
 
     protected function hasQueryModificationCallback(): bool

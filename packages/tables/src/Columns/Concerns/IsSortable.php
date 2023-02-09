@@ -11,13 +11,16 @@ trait IsSortable
     protected ?array $sortColumns = [];
     protected ?\Closure $sortQuery = null;
 
-    public function sortable(bool|array $condition = true, ?\Closure $query = null): static
+    /**
+     * Defines whether the column should be sortable.
+     */
+    public function sortable(bool|array $conditionOrColumns = true, ?\Closure $query = null): static
     {
-        if (\is_array($condition)) {
+        if (\is_array($conditionOrColumns)) {
             $this->isSortable = true;
-            $this->sortColumns = $condition;
+            $this->sortColumns = $conditionOrColumns;
         } else {
-            $this->isSortable = $condition;
+            $this->isSortable = $conditionOrColumns;
             $this->sortColumns = null;
         }
 

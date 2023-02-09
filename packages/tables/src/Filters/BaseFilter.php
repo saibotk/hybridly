@@ -10,9 +10,9 @@ abstract class BaseFilter extends Component
 {
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasType;
     use Concerns\IsHideable;
     use Filters\Concerns\HasDefaultValue;
-    use Filters\Concerns\HasType;
     use Filters\Concerns\InteractsWithTableQuery;
 
     final public function __construct(string $name)
@@ -33,7 +33,7 @@ abstract class BaseFilter extends Component
     protected function getDefaultEvaluationParameters(): array
     {
         return [
-            'action' => $this,
+            'filter' => $this,
         ];
     }
 

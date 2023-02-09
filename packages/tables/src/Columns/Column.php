@@ -2,6 +2,6 @@
 
 namespace Hybridly\Tables\Columns;
 
-class TextColumn extends BaseColumn
+class Column extends BaseColumn
 {
 }

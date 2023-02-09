@@ -8,7 +8,6 @@ use Hybridly\Tables\Support\Concerns;
 
 abstract class BaseColumn extends Component
 {
-    use Columns\Concerns\HasRecord;
     use Columns\Concerns\IsSortable;
     use Concerns\HasLabel;
     use Concerns\HasName;
@@ -18,6 +17,7 @@ abstract class BaseColumn extends Component
     {
         $this->name($name);
         $this->label(str($name)->headline()->lower()->ucfirst());
+        $this->type('custom');
         $this->setUp();
     }
 
@@ -40,7 +40,6 @@ abstract class BaseColumn extends Component
         return [
             'name' => $this->getName(),
             'label' => $this->getLabel(),
-            'record' => $this->getRecord(),
             'hidden' => $this->isHidden(),
             'sortable' => $this->isSortable(),
         ];
