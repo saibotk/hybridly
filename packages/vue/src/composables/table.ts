@@ -56,6 +56,8 @@ export interface Filter {
 }
 
 export interface BulkAction extends Action {
+	/** Should deselect all records after action. */
+	deselect: boolean
 }
 
 export interface InlineAction extends Action {
@@ -92,7 +94,7 @@ interface BulkSelection {
 }
 
 interface BulkActionOptions {
-	/** Deselects all records after action. */
+	/** Force deselecting all records after action. */
 	deselect?: boolean
 }
 
@@ -343,7 +345,7 @@ export function useTable<
 			},
 			hooks: {
 				after: () => {
-					if (options?.deselect !== false) {
+					if (options?.deselect === true || table.value.bulkActions.find(({ name }) => name === action)?.deselect !== false) {
 						bulk.deselectAll()
 					}
 				},
