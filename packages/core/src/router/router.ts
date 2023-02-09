@@ -1,5 +1,5 @@
 import type { AxiosProgressEvent, AxiosResponse } from 'axios'
-import { showResponseErrorModal, match, merge, when, debug, random, hasFiles, objectToFormData } from '@hybridly/utils'
+import { showResponseErrorModal, match, merge, when, debug, random, hasFiles, objectToFormData, invoke } from '@hybridly/utils'
 import { ERROR_BAG_HEADER, EXCEPT_DATA_HEADER, EXTERNAL_NAVIGATION_HEADER, ONLY_DATA_HEADER, PARTIAL_COMPONENT_HEADER, HYBRIDLY_HEADER, VERSION_HEADER, DIALOG_KEY_HEADER, DIALOG_REDIRECT_HEADER } from '../constants'
 import { NotAHybridResponseError, NavigationCancelledError } from '../errors'
 import type { InternalRouterContext, RouterContextOptions } from '../context'
@@ -220,13 +220,13 @@ export async function performHybridNavigation(options: HybridRequestOptions): Pr
 		// an error bag, and if the given error bag is missing, the event data
 		// will be empty.
 		if (Object.keys(context.view.properties.errors ?? {}).length > 0) {
-			const errors = (() => {
+			const errors = invoke<Errors>(() => {
 				if (options.errorBag && typeof context.view.properties.errors === 'object') {
 					return (context.view.properties.errors as any)[options.errorBag] ?? {}
 				}
 
 				return context.view.properties.errors
-			})() as Errors
+			})
 
 			debug.router('The request returned validation errors.', errors)
 			setContext({

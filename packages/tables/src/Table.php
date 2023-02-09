@@ -97,7 +97,7 @@ class Table implements HasTable
             'filters' => $this->getTableFilters()->all(),
             'inlineActions' => $this->getInlineActions()->all(),
             'bulkActions' => $this->getBulkActions()->all(),
-            'currentSorts' => $this->getCurrentSort(),
+            'currentSorts' => $this->getCurrentSorts(),
             'currentFilters' => $this->getCurrentFilters(),
             'scope' => $this->formatScope(),
         ];

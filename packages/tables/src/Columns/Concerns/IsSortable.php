@@ -2,6 +2,8 @@
 
 namespace Hybridly\Tables\Columns\Concerns;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
+
 /** @mixin \Hybridly\Tables\Columns\BaseColumn */
 trait IsSortable
 {
@@ -32,6 +34,22 @@ trait IsSortable
     public function isSortable(): bool
     {
         return $this->isSortable;
+    }
+
+    public function applySortQuery(Builder $query, string $direction): void
+    {
+        if ($this->sortQuery) {
+            $this->evaluate($this->sortQuery, [
+                'query' => $query,
+                'direction' => $direction,
+            ]);
+
+            return;
+        }
+
+        foreach ($this->getSortColumns() as $column) {
+            $query->orderBy($column, $direction);
+        }
     }
 
     protected function getDefaultSortColumns(): array

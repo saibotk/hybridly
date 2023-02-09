@@ -1,6 +1,10 @@
 import baseMerge from 'deepmerge'
 export { default as clone } from 'lodash.clonedeep'
 
+export function invoke<T = never>(fn: () => T): T {
+	return fn() as any
+}
+
 export function random(length: number = 10): string {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 

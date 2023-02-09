@@ -9,7 +9,6 @@ use Hybridly\Tables\Support\Concerns;
 abstract class BaseColumn extends Component
 {
     use Columns\Concerns\HasRecord;
-    use Columns\Concerns\IsSearchable;
     use Columns\Concerns\IsSortable;
     use Concerns\HasLabel;
     use Concerns\HasName;
@@ -44,9 +43,6 @@ abstract class BaseColumn extends Component
             'record' => $this->getRecord(),
             'hidden' => $this->isHidden(),
             'sortable' => $this->isSortable(),
-            'searchable' => $this->isSearchable(),
-            'search_columns' => $this->getSearchColumns(),
-            'sort_columns' => $this->getSortColumns(),
         ];
     }
 }

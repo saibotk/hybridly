@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 /** @mixin \Hybridly\Tables\Table */
 trait HasSorts
 {
-    private mixed $cachedTableSorts = null;
+    private ?Collection $cachedTableSorts = null;
 
     protected function getSortableColumns(): Collection
     {
@@ -19,35 +19,52 @@ trait HasSorts
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
-        if (\is_null($sort = $this->getCurrentSort())) {
+        if (\is_null($sorts = $this->getCurrentSorts())) {
             return $query;
         }
 
-        return $query->orderBy($sort['column'], $sort['direction']);
+        $this->getSortableColumns()->each(function (BaseColumn $column) use ($sorts, $query) {
+            if (!$sort = data_get($sorts, $column->getName())) {
+                return;
+            }
+
+            $column->applySortQuery($query, $sort['direction']);
+        });
+
+        return $query;
     }
 
-    // TODO: support multiple sorts
-    protected function getCurrentSort(): ?array
+    protected function getCurrentSorts(): Collection
     {
-        if (blank($sort = $this->request->get($this->formatScope('sorts')))) {
-            return null;
+        if ($this->cachedTableSorts) {
+            return $this->cachedTableSorts;
         }
 
-        $isSortAllowed = $this->getSortableColumns()
-            ->map->getName()
-            ->contains(ltrim($sort, '-'));
-
-        if (!$isSortAllowed) {
-            return null;
+        if (blank($sorts = $this->request->get($this->formatScope('sorts')))) {
+            return collect();
         }
 
-        $name = ltrim($sort, '-');
+        $sortableColumnNames = $this->getSortableColumns()->map->getName();
 
-        return [
-            'sort' => $sort,
-            'column' => $name,
-            'direction' => '-' === $sort[0] ? 'desc' : 'asc',
-            'inverse' => '-' === $sort[0] ? $name : ('-' . $name),
-        ];
+        return $this->cachedTableSorts = collect(explode(',', $sorts))->mapWithKeys(function (string $sort) use ($sortableColumnNames) {
+            if (!$sortableColumnNames->contains(ltrim($sort, '-'))) {
+                return null;
+            }
+
+            $name = ltrim($sort, '-');
+
+            return [
+                $name => [
+                    'sort' => $sort,
+                    'column' => $name,
+                    'direction' => '-' === $sort[0] ? 'desc' : 'asc',
+                    'next' => match (true) {
+                        $sort === $name => "-{$name}",
+                        '-' === $sort[0] => null,
+                        default => $name
+                    },
+                ],
+            ];
+        });
     }
 }

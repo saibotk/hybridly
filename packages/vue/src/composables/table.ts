@@ -1,3 +1,4 @@
+import { invoke } from '@hybridly/utils'
 import type { NavigationResponse } from 'hybridly'
 import { route, router } from 'hybridly'
 import { computed, reactive, ref } from 'vue'
@@ -13,7 +14,7 @@ declare global {
 		inlineActions: InlineAction[]
 		bulkActions: BulkAction[]
 		records: UnwrappedPaginator<T>
-		currentSorts?: Sort
+		currentSorts: Record<string, Sort>
 		currentFilters: Record<string, {
 			is_filter_active?: boolean
 			[key: string]: any
@@ -26,8 +27,9 @@ export type RecordIdentifier = string | number
 export type SortDirection = 'asc' | 'desc'
 
 export interface Sort {
+	sort: string
 	column: string
-	inverse: string
+	next?: string
 	direction: SortDirection
 }
 
@@ -36,7 +38,6 @@ export interface Column<T extends object = never> {
 	label: string
 	hidden: boolean
 	sortable: boolean
-	searchable: boolean
 	record: T
 }
 
@@ -205,7 +206,7 @@ export function useTable<
 	async function reset() {
 		return await router.reload({
 			data: {
-				[sortsKey.value]: undefined, // TODO: multiple sorts
+				[sortsKey.value]: undefined,
 				[filtersKey.value]: undefined,
 				[pageKey.value]: undefined,
 			},
@@ -246,7 +247,7 @@ export function useTable<
 	async function resetSorts() {
 		return await router.reload({
 			data: {
-				[sortsKey.value]: undefined, // TODO: multiple sorts
+				[sortsKey.value]: undefined,
 			},
 		})
 	}
@@ -254,19 +255,23 @@ export function useTable<
 	/**
 	 * Toggles the sorting for the given column.
 	 */
-	async function toggleSort(column: ColumnType) {
+	async function toggleSort(column: ColumnType, direction?: SortDirection) {
 		if (!table.value.columns.find(({ name, sortable }) => sortable && name === column)) {
 			return
 		}
 
-		const currentSort = table.value.currentSorts
-		const sort = (() => {
+		const currentSort = Reflect.get(table.value.currentSorts, column) as Sort
+		const sort = invoke<string | undefined>(() => {
+			if (direction) {
+				return direction === 'desc' ? currentSort.column : `-${currentSort.column}`
+			}
+
 			if (currentSort?.column === column) {
-				return currentSort.inverse
+				return currentSort.next || undefined
 			}
 
 			return String(column)
-		})()
+		})
 
 		return await router.reload({
 			data: {
@@ -290,7 +295,7 @@ export function useTable<
 	 * Determines whether the given column is being sorted.
 	 */
 	function isSorting(column: ColumnType, direction?: SortDirection) {
-		const sort = table.value.currentSorts
+		const sort = Reflect.get(table.value.currentSorts, column)
 
 		if (!sort) {
 			return false
@@ -361,7 +366,7 @@ export function useTable<
 		isSelected: bulk.selected,
 		allSelected: bulk.allSelected,
 		selection: bulk.selection,
-		currentSort: computed(() => table.value.currentSorts),
+		currentSorts: computed(() => table.value.currentSorts),
 		bulkActions: computed(() => table.value.bulkActions),
 		columns: computed(() => table.value.columns.map((column) => ({
 			...column,
@@ -397,7 +402,7 @@ interface UseTableResult<RecordType extends object, ColumnType extends keyof Rec
 	isSorting: (column: ColumnType, direction?: SortDirection) => boolean
 	executeInlineAction: (action: string, record: RecordIdentifier) => Promise<NavigationResponse>
 	executeBulkAction: (action: string, options?: BulkActionOptions) => Promise<NavigationResponse>
-	currentSort?: Sort
+	currentSorts?: Record<string, Sort>
 	columns: ColumnCollection<RecordType>
 	records: RecordCollection<RecordType>
 	filters: FilterCollection
