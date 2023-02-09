@@ -2,7 +2,7 @@
 
 namespace Hybridly\Tests;
 
-use Hybridly\HybridlyServiceProvider;
+use Hybridly\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -11,7 +11,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            HybridlyServiceProvider::class,
+            ServiceProvider::class,
         ];
     }
 

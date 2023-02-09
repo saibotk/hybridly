@@ -17,7 +17,7 @@ use Illuminate\View\Compilers\BladeCompiler;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class HybridlyServiceProvider extends PackageServiceProvider
+class ServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -45,14 +45,15 @@ class HybridlyServiceProvider extends PackageServiceProvider
 
     protected function registerMacros(): void
     {
-        /** Checks if the request is hybridly. */
+        // Checks if the request is hybridly.
         Request::macro('isHybrid', fn () => hybridly()->isHybrid());
-        /** Serves a hybrid route. */
+        // Serves a hybrid route.
         Router::macro('hybridly', function (string $uri, string $component, array $properties = []) {
-            /** @phpstan-ignore-next-line */
+            // @phpstan-ignore-next-line
             return $this->match(['GET', 'HEAD'], $uri, Controller::class)
                 ->defaults('component', $component)
-                ->defaults('properties', $properties);
+                ->defaults('properties', $properties)
+            ;
         });
     }
 
@@ -72,13 +73,14 @@ class HybridlyServiceProvider extends PackageServiceProvider
                         preg_match('/([\w -]+): *[\'"]([\w -]+)[\'"]/', $e, $matches);
 
                         return [$matches[1] => $matches[2]];
-                    });
+                    })
+                ;
 
                 $element = $options->get('element', 'div');
                 $id = $options->get('id', 'root');
                 $class = $options->get('class', '');
                 $template = <<<HTML
-                    <${element} id="${id}" class="${class}" data-payload="{{ json_encode(\$payload) }}"></${element}>
+                    <{$element} id="{$id}" class="{$class}" data-payload="{{ json_encode(\$payload) }}"></{$element}>
                 HTML;
 
                 return implode(' ', array_map('trim', explode("\n", $template)));
