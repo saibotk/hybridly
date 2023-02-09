@@ -13,6 +13,7 @@ jobs:
       matrix:
         package:
           - laravel
+          - tables
 
     steps:
       - uses: actions/checkout@v2
