@@ -40,7 +40,6 @@
                 "packages/laravel/src"
             ],
             "Hybridly\\Tables\\": [
-                "packages/datatables/src",
                 "packages/tables/src"
             ],
             "Hybridly\\Tests\\": "tests/src",
@@ -86,7 +85,6 @@
         ]
     },
     "replace": {
-        "hybridly/datatables": "self.version",
         "hybridly/laravel": "self.version",
         "hybridly/tables": "self.version"
     },
