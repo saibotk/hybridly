@@ -45,9 +45,9 @@ class ServiceProvider extends PackageServiceProvider
 
     protected function registerMacros(): void
     {
-        // Checks if the request is hybridly.
+        /* Checks if the request is hybrid. */
         Request::macro('isHybrid', fn () => hybridly()->isHybrid());
-        // Serves a hybrid route.
+        /* Serves a hybrid route. */
         Router::macro('hybridly', function (string $uri, string $component, array $properties = []) {
             // @phpstan-ignore-next-line
             return $this->match(['GET', 'HEAD'], $uri, Controller::class)
