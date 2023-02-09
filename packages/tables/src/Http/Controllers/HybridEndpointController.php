@@ -78,9 +78,8 @@ final class HybridEndpointController
         /** @var \Illuminate\Database\Eloquent\Builder */
         $query = $model::query();
         $query = match (true) {
-            $data->all && \count($data->except) > 0 => $query->whereNotIn($key, $data->except),
-            \count($data->only) > 0 => $query->whereIn($key, $data->only),
-            default => $query
+            $data->all === true => $query->whereNotIn($key, $data->except),
+            default => $query->whereIn($key, $data->only)
         };
 
         // If the action has a 'query' parameter, we pass it.
